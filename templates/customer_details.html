@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Customer Details</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Customer Details</h1>
+        <hr>
+        <div class="row">
+
+            <div class="col-md-6">
+                <table class="table table-bordered table-hover">
+                    <tbody>
+                      {% for item in keys %}
+                        <tr>
+                            <td><strong>{{item}}</strong></td>
+                            <td>{{ cus[item] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+               <div class="button-row" style="display: flex; justify-content: space-between;">
+                     <a href="{{ url_for('customer.edit_customer', customer_id=cus.id) }}" class="btn btn-primary">Edit Customer</a>
+                <form action="{{ url_for('customer.delete_customer', customer_id=cus.id) }}" method="post">
+                    <button type="submit" class="btn btn-danger">Delete Customer</button>
+                </form>
+
+               </div>
+
+
+            </div>
+            <div class="col-md-6">
+                <img src="{{ url_for('static', filename='images/car.jpg') }}" class="img-fluid rounded">
+                <a href="{{ url_for('customer.customer_home') }}" class="btn btn-secondary">Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

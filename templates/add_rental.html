@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<head>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function()
+         {
+            $("#customer-search").on("input",function(){
+            var searchName=$(this).val().toLowerCase();
+
+            $("#customer option").filter(function(){
+             $(this).toggle($(this).text().toLowerCase().indexof(searchName) > -1)
+            });
+
+            $("customerNames").toggle($("#customer option : visible").length>0);
+            });
+         });
+
+    </script>
+
+</head>
+    <h1>Add Rental</h1>
+    <form method="POST" action="{{ url_for('rental.add_rental',car_id=car_id) }}">
+    {% for key, value in rental.items() %}
+
+        {% if key != 'id' and key != 'links' and key != 'car_id' %}
+            <div class="form-group">
+
+                      {% if key=='customer_id' %}
+
+        <label for="customerNames">Chose a Customer </label>
+        <br>
+        <input type="text" id="customer-search" class="form-control" name="customerNames" list="customer option" placeholder="Search...">
+        <datalist id="customer option">
+            {% for customer in customers %}
+            <option value="{{ customer.name }}"> {{ customer.name }} </option>
+            {% endfor %}
+
+        </datalist>
+
+        <select id="customerNames" name="customerNames" style="display:none">
+
+            {% for customer in customers %}
+            <option value="{{ customer.name }}">{{ customer.name }}</option>
+            {% endfor %}
+        </select>
+
+         {% else %}
+
+
+                <label for="{{ key }}">{{ key|title }}</label>
+                <input type="text" class="form-control" id="{{ key }}" name="{{ key }}" value="{{Nothing}}">
+
+         {% endif %}
+            </div>
+
+
+        {% endif %}
+
+
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Add</button>
+</form>
+    <a href="{{ url_for('rental.add_rental',car_id=car_id) }}" onclick="return confirm('Are you sure you want to cancel this Rental?')">Cancel Rental</a>
+{% endblock %}

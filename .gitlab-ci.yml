@@ -1,0 +1,77 @@
+stages:          # List of stages for jobs, and their order of execution
+  - build
+  - test
+  - deploy
+
+build-job:       # This job runs in the build stage, which runs first.
+  stage: build
+  tags:
+    - python
+  script:
+    - echo "Compiling the code..."
+    - echo "Compile complete."
+
+unit-test-job:   # This job runs in the test stage.
+  stage: test    # It only starts when the job in the build stage completes successfully.
+  tags:
+    - python
+  image: python:3.9-alpine
+  script:
+    - echo "Running unit tests..."
+    - pip install coverage pytest-xdist
+    - pip install -r requirements.txt
+    - mkdir coverage
+    - coverage run -m pytest --junitxml=coverage/junit.xml tests/
+    - coverage report
+    - coverage html -d coverage
+    - coverage xml -o coverage/coverage.xml
+    - ls -la coverage
+  artifacts:
+    paths:
+      - coverage/
+    reports:
+      junit: coverage/junit.xml
+    expire_in: 30 days
+  # allow_failure: true
+
+lint-test-job:
+  stage: test
+  tags:
+    - python
+  image: python:3.9-alpine
+  before_script:
+    - apt-get update && apt-get install -y python3-pip
+    - pip install anybadge
+  script:
+    - echo "Installing pylint..."
+    - pip install pylint
+    - pip install -r requirements.txt
+    - mkdir ./pylint/
+    - find . -name "*.py" -exec pylint --disable=import-error --max-line-length=200 --disable=R,C {} + > ./pylint/pylint.log 2>&1 || true
+    - PYLINT_SCORE=$(sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' ./pylint/pylint.log 2>/dev/null || echo "0")
+    - anybadge --label=Pylint --file=pylint/pylint.svg --value=$PYLINT_SCORE 2=red 4=orange 8=yellow 10=green
+    - echo "Pylint score is $PYLINT_SCORE"
+  artifacts:
+    paths:
+      - ./pylint/
+    expire_in: 30 days
+  allow_failure: true
+
+deploy-job:      # This job runs in the deployment stage.
+  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully
+  tags:
+    - python
+  environment: production
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH == "main"'  # Run for main branch only
+  before_script:
+    - echo $SSH_KEY
+    - chmod 400 $SSH_KEY
+  script:
+    - ssh -o StrictHostKeyChecking=no -i $SSH_KEY ubuntu@86.50.230.190 "
+      sudo apt-get update &&
+      rm -rf mycarapp &&
+      git clone  -b $CI_COMMIT_REF_NAME git@gitlab.com:ijkhan22/mycarapp.git &&
+      cd mycarapp &&
+      sudo docker-compose down &&
+      sudo docker-compose up -d --build"

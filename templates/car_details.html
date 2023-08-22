@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+        <h1>Car Details</h1>
+        <hr>
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table table-bordered table-hover">
+                    <tbody>
+                    {% for item in keys %}
+                        <tr>
+                            <td><strong>{{item}}</strong></td>
+                            <td>{{ car[item] }}</td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+                <div class="button-row" style="display: flex; justify-content: space-between;">
+                    <a href="{{ url_for('car.edit_car', car_id=car.id) }}" class="btn btn-primary">Edit Car</a>
+                   <form action="{{ url_for('car.delete_car', car_id=car.id) }}" method="post">
+                    <button type="submit" class="btn btn-danger">Delete Car</button>
+                </form>
+                </div>
+
+
+            </div>
+            <div class="col-md-6">
+                <img src="{{ image_link}}"  width="600" height="600" class="img-fluid rounded">
+                <div class="mt-3">
+                {% if car.status == 'available' %}
+                    <h3>Car Is Available For <span class="text-success">{{car.rent_price}}€/Day</span></h3>
+                    <a href="{{ url_for('rental.add_rental', car_id=car.id) }}" class="btn btn-lg btn-success">Rent Now</a>
+                {% else %}
+                    <button class="btn btn-lg btn-danger" disabled>Car Rented</button>
+                {% endif %}
+            </div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+{% endblock %}
+
+{% block custom_styles %}
+  <style>
+    .card-title {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-text {
+      margin-bottom: 0.25rem;
+    }
+
+    .card-text:last-child {
+      margin-bottom: 0;
+    }
+  </style>
+{% endblock %}

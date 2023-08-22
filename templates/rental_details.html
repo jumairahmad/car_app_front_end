@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1>Rental Details</h1>
+        <hr>
+        <div class="row" >
+            <div class="col-md-6">
+                <table class="table table-bordered table-hover">
+                    <tbody>
+
+                    {% for item in keys %}
+                        <tr>
+                            <td><strong>{{item}}</strong></td>
+                            <td>{{ rental[item] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+
+            <div class="button-row" style="display: flex; justify-content: space-between;">
+                    <form action="{{ url_for('rental.delete_rental', rental_id=rental.id) }}" method="post">
+                    <button type="submit" class="btn btn-danger">Delete rental</button>
+                </form>
+                <a href="{{ url_for('rental.edit_rental', rental_id=rental.id) }}" class="btn btn-primary">Edit rental</a>
+                <a href="{{ url_for('rental.rental_home', rental_id=rental.id) }}" class="btn btn-primary">Cancel</a>
+            </div>
+
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block custom_styles %}
+  <style>
+    .card-title {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-text {
+      margin-bottom: 0.25rem;
+    }
+
+    .card-text:last-child {
+      margin-bottom: 0;
+    }
+  </style>
+{% endblock %}
+

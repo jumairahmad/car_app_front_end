@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Add Car</h1>
+<form method="POST" action="{{ url_for('car.add_car') }}">
+    {% for key, value in car.items() %}
+        {% if key != 'id' and key != 'links' %}
+            <div class="form-group">
+                <label for="{{ key }}">{{ key|title }}</label>
+                <input type="text" class="form-control" id="{{ key }}" name="{{ key }}" value="{{Nothing}}">
+            </div>
+        {% endif %}
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Add</button>
+</form>
+
+    <a href="{{ url_for('car.add_car') }}" onclick="return confirm('Are you sure you want to cancel this car?')">Cancel</a>
+{% endblock %}

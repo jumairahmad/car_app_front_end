@@ -1,0 +1,5 @@
+Flask==2.2.3
+google_images_search
+requests==2.28.2
+pytest==7.3.1
+flask_caching==2.0.2

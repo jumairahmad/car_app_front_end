@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Edit Rental</h1>
+    <form action="{{ url_for('rental.edit_rental', rental_id=rental.id) }}" method="post">
+           {% for key, value in rental.items() %}
+        {% if key != 'id' and key != 'links' %}
+            <div class="form-group">
+                <label for="{{ key }}">{{ key|title }}</label>
+                <input type="text" class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}">
+            </div>
+        {% endif %}
+    {% endfor %}
+
+
+        <button type="submit">Save Changes</button>
+    </form>
+ <a href="{{ url_for('rental.delete_rental', rental_id=rental.id) }}" onclick="return confirm('Are you sure you want to delete this Rental?')">Delete Rental</a>
+{% endblock %}
